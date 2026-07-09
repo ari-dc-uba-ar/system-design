@@ -23,6 +23,19 @@ export type FieldInfo<TypeDefs extends TypeCollection = typeof commonTypeDefs> =
 
 export type RecordDef<TypeDefs extends TypeCollection = typeof commonTypeDefs> = Record<string, FieldDef<TypeDefs>>
 
+// export type RecordInfo<TypeDefs extends TypeCollection = typeof commonTypeDefs> = Required<RecordDef<TypeDefs>>
+export type RecordInfo<TypeDefs extends TypeCollection = typeof commonTypeDefs> = Record<string, FieldInfo<TypeDefs>>
+
+export function completeRecord<TypeDefs extends TypeCollection = typeof commonTypeDefs>(recordDef: RecordDef<TypeDefs>): RecordInfo<TypeDefs>{
+    return Object.fromEntries(Object.entries(recordDef).map(([name, fieldDef]) => ([name, {
+        ...fieldDef,
+        label: fieldDef.label ?? name.replace(/_/g,' '),
+        nullable: fieldDef.nullable ?? true,
+        description: fieldDef.description ?? '',
+    }])));
+}
+
 export type RecordInstanceType<TTypeCollection extends TypeCollection, TRecordDef extends RecordDef<TTypeCollection>> = {
     [K in keyof TRecordDef]: TTypeCollection[TRecordDef[K]['type']]['tsType']
 }
+
