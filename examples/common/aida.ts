@@ -17,15 +17,15 @@ type RecordsDef = RecordDef<typeof typeDefs>
 
 export const cargo = {
     cargo            : {type: 'text' },
-    denominacion     : {type: 'text' , label:'denomiación'},
+    denominacion     : {type: 'text' , label:'denominación'},
     orden            : {type: 'integer'},
     puede_dirigir    : {type: 'boolean'},
 
 } satisfies RecordsDef
 
 export const materia = {
-    materia          : {type: 'text' },
-    denominacion     : {type: 'text' , label:'denomiación'},
+    materia          : {type: 'text'   },
+    denominacion     : {type: 'text'   , label:'denominación', nullable: false, description: 'si corresponde a más de una carrera, aclarar en el nombre'},
 } satisfies RecordsDef
 
 export const docente = {

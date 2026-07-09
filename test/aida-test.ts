@@ -1,7 +1,7 @@
 import * as assert from "assert";
 
-import { RecordInstanceType } from "../src/common/system-design";
-import { typeDefs, cargo } from "../examples/common/aida";
+import { RecordInstanceType, completeRecord } from "../src/common/system-design";
+import { typeDefs, cargo, materia } from "../examples/common/aida";
 
 describe("aida example", function(){
     it("deduces the record instance type", function(){
@@ -23,5 +23,12 @@ describe("aida example", function(){
         var obtained: Cargo = cargoDeducido;
         assert.deepStrictEqual(cargoDeducido, jtp);
         assert.deepStrictEqual(obtained, jtp);
+    })
+    it("completes a record def into a record info", function(){
+        var materiaInfo = completeRecord(materia);
+        assert.deepStrictEqual(materiaInfo, {
+            materia      : {type: 'text', label: 'materia'     , nullable: true , description: ''},
+            denominacion : {type: 'text', label: 'denominación', nullable: false, description: 'si corresponde a más de una carrera, aclarar en el nombre'},
+        });
     })
 })
