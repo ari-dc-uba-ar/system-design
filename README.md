@@ -1,12 +1,13 @@
-<!--multilang v0 en:README.md es:LEEME.md -->
-<!--multilang buttons-->
+# system-design
+Descriptive layer for systems designed around a Single Source of Truth (SSOT).
+
 
 language: ![English](https://raw.githubusercontent.com/codenautas/multilang/master/img/lang-en.png)
 also available in:
 [![Spanish](https://raw.githubusercontent.com/codenautas/multilang/master/img/lang-es.png)](LEEME.md)
 
-<!--lang:en-->
-# system-design
+
+## Goal
 
 Descriptive layer for systems designed around a Single Source of Truth (SSOT).
 
@@ -18,20 +19,6 @@ validators, and so on.
 
 This module covers only the descriptive part of systems: it does not generate anything itself.
 
-<!--lang:es--]
-# system-design
-
-Capa descriptiva para sistemas diseñados alrededor de una única fuente de verdad (SSOT).
-
-Este módulo provee el vocabulario para describir un sistema — tipos de dominio, entidades,
-campos, procedimientos — como valores fuertemente tipados y serializables. A partir de esas
-descripciones, generadores de código o implementaciones on-the-fly pueden derivar los scripts
-de creación de tablas, los endpoints CRUD con su capa de base de datos, las pantallas del
-frontend, los serializadores en ambos sentidos, los validadores de tipo, etc.
-
-Este módulo cubre solo la parte descriptiva de los sistemas: no genera nada por sí mismo.
-
-[!--lang:en-->
 ## Structure
 
 * `src/common`: the descriptive framework; it knows nothing about any concrete system.
@@ -41,21 +28,6 @@ Este módulo cubre solo la parte descriptiva de los sistemas: no genera nada por
 
 Design stage.
 
-<!--lang:es--]
-## Estructura
-
-* `src/common`: el framework descriptor; no conoce ningún sistema concreto.
-* `examples/common`: un sistema de ejemplo (sistema de alumnos) descripto con el framework.
-
-## Estado
-
-En etapa de diseño.
-
-[!--lang:en-->
 ## License
 
-<!--lang:es--]
-## Licencia
-
-[!--lang:*-->
 [MIT](LICENSE)

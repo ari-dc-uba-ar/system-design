@@ -15,8 +15,8 @@ Este módulo cubre **solo la parte descriptiva**: no genera nada.
 * Código e identificadores dentro de `src` y `examples` en inglés.
 * Los planes y este archivo, en castellano.
 * Documentación multilingüe con la herramienta `multilang` (disponible en el PATH):
-  la fuente es `README.md` en inglés; `LEEME.md` en castellano se genera con `multilang README.md`.
-  No editar `LEEME.md` a mano.
+  la fuente es `LEEME.md` en castellano; `README.md` en inglés se genera con `multilang LEEME.md`.
+  No editar `README.md` a mano.
 
 ## Estructura
 
