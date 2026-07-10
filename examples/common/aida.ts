@@ -2,7 +2,7 @@
 
 import {
     boxType, commonTypeDefs,
-    RecordDef
+    RecordDef, defineEntity, extractPk
 } from "../../src/common/system-design";
 
 type Fecha = {año: number, mes: number, día:number}
@@ -43,9 +43,47 @@ export const asignacion = {
     cargo  : cargo.cargo,
 } satisfies RecordsDef
 
+export const periodo = {
+    periodo          : {type: 'text' , description: 'bimestre, cuatrimestre, etc...'},
+} satisfies RecordsDef
+
+/* entities: plural names wrap the singular record defs */
+
+export const docentes = defineEntity({pk: ['docente'], fields: docente})
+export const materias = defineEntity({pk: ['materia'], fields: materia})
+export const periodos = defineEntity({pk: ['periodo'], fields: periodo})
+
+export const curso = {
+    ...extractPk(periodos),
+    ...extractPk(materias),
+    ...extractPk(docentes), // docente responsable del curso
+} satisfies RecordsDef
+
+export const cursos = defineEntity({pk: ['periodo', 'materia'], fields: curso})
+
+export const clase = {
+    ...extractPk(cursos),
+    orden            : {type: 'integer'},
+    fecha            : {type: 'fecha'  },
+    tema             : {type: 'text'   },
+} satisfies RecordsDef
+
+export const clases = defineEntity({pk: [...cursos.pk, 'orden'], fields: clase})
+
 export const recordDefs = {
     cargo,
     docente,
     materia,
-    asignacion
+    asignacion,
+    periodo,
+    curso,
+    clase,
+}
+
+export const entityDefs = {
+    docentes,
+    materias,
+    periodos,
+    cursos,
+    clases,
 }

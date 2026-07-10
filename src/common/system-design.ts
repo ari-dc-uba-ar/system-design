@@ -43,3 +43,22 @@ export type RecordInstanceType<TTypeCollection extends TypeCollection, TRecordDe
     [K in keyof TRecordDef]: TTypeCollection[TRecordDef[K]['type']]['tsType']
 }
 
+export type EntityDef<TypeDefs extends TypeCollection = typeof commonTypeDefs> = {
+    pk: readonly string[]
+    fields: RecordDef<TypeDefs>
+}
+
+export function defineEntity<const TPk extends readonly (keyof TFields & string)[], const TFields extends RecordDef<TypeCollection>>(
+    entityDef: {pk: TPk, fields: TFields}
+): {pk: TPk, fields: TFields} {
+    return entityDef;
+}
+
+export type PkFieldsOf<TEntityDef extends EntityDef<TypeCollection>> =
+    Pick<TEntityDef['fields'], TEntityDef['pk'][number] & keyof TEntityDef['fields']>
+
+export function extractPk<TEntityDef extends EntityDef<TypeCollection>>(entityDef: TEntityDef): PkFieldsOf<TEntityDef> {
+    const fields: RecordDef<TypeCollection> = entityDef.fields;
+    return Object.fromEntries(entityDef.pk.map(name => [name, fields[name]])) as PkFieldsOf<TEntityDef>;
+}
+

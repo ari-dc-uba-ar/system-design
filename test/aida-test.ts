@@ -1,7 +1,7 @@
 import * as assert from "assert";
 
-import { RecordInstanceType, completeRecord } from "../src/common/system-design";
-import { typeDefs, cargo, materia } from "../examples/common/aida";
+import { RecordInstanceType, completeRecord, defineEntity, extractPk } from "../src/common/system-design";
+import { typeDefs, cargo, materia, curso, clase, cursos, clases } from "../examples/common/aida";
 
 describe("aida example", function(){
     it("deduces the record instance type", function(){
@@ -53,5 +53,55 @@ describe("aida example", function(){
         var expected: CargoInfoExpected = cargoInfo;
         var deducedBack: typeof cargoInfo = expected;
         assert.deepStrictEqual(deducedBack, expected);
+    })
+})
+
+describe("aida entities", function(){
+    it("keeps the pk literal tuple, in both directions", function(){
+        var cursosPk: readonly ['periodo', 'materia'] = cursos.pk;
+        var cursosPkBack: typeof cursos.pk = cursosPk;
+        var clasesPk: readonly ['periodo', 'materia', 'orden'] = clases.pk;
+        var clasesPkBack: typeof clases.pk = clasesPk;
+        assert.deepStrictEqual(cursosPk, ['periodo', 'materia']);
+        assert.deepStrictEqual(clasesPk, ['periodo', 'materia', 'orden']);
+        assert.deepStrictEqual(cursosPkBack, cursosPk);
+        assert.deepStrictEqual(clasesPkBack, clasesPk);
+    })
+    it("rejects pk keys that are not keys of fields", function(){
+        // @ts-expect-error 'inexistente' is not a field
+        var wrong = defineEntity({pk: ['inexistente'], fields: materia});
+        // @ts-expect-error a wrong key among valid ones is also rejected
+        var wrong2 = defineEntity({pk: ['materia', 'inexistente'], fields: materia});
+        // (the check is compile-time only: at runtime defineEntity is the identity)
+        assert.deepStrictEqual(wrong.pk, ['inexistente']);
+        assert.deepStrictEqual(wrong2.pk, ['materia', 'inexistente']);
+    })
+    it("extracts the pk fields with their exact types and order", function(){
+        var cursosPkFields = extractPk(cursos);
+        type CursosPkExpected = {
+            periodo : {type: 'text', description: string},
+            materia : {type: 'text'},
+        }
+        // both assignments must compile: expected and extracted are mutually assignable
+        var expected: CursosPkExpected = cursosPkFields;
+        var extractedBack: typeof cursosPkFields = expected;
+        // @ts-expect-error 'docente' is not part of the pk
+        var noDocente = cursosPkFields.docente;
+        assert.deepStrictEqual(cursosPkFields, {periodo: curso.periodo, materia: curso.materia});
+        assert.deepStrictEqual(Object.keys(cursosPkFields), ['periodo', 'materia']);
+        assert.deepStrictEqual(extractedBack, expected);
+        assert.equal(noDocente, undefined);
+    })
+    it("inherits pk fields into other entities", function(){
+        // curso got all its fields from the periodos, materias and docentes pks:
+        assert.deepStrictEqual(Object.keys(curso), ['periodo', 'materia', 'docente']);
+        // clase extends the cursos pk with its own fields:
+        assert.deepStrictEqual(Object.keys(clase), ['periodo', 'materia', 'orden', 'fecha', 'tema']);
+        // the inherited fields keep their type literals:
+        var periodoType: 'text' = clases.fields.periodo.type;
+        // @ts-expect-error the literal is preserved, not widened to string
+        var wrongType: 'integer' = clases.fields.periodo.type;
+        assert.equal(periodoType, 'text');
+        assert.equal(wrongType, 'text');
     })
 })

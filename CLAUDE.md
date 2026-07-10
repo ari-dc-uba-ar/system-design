@@ -75,8 +75,16 @@ Nombres ya elegidos:
   `Record<K, V>` de TypeScript.
 * La descripción de un campo es `FieldDef` / `FieldInfo`. `RecordDef` es el mapa de campos:
   `Record<string, FieldDef>`.
-* `Entity` queda reservado para el nivel contenedor (la unidad representable como grilla,
-  como la llama el documento SSOTIGAD), si más adelante hace falta describirlo.
+* `EntityDef` es el nivel contenedor (la unidad representable como grilla, como la llama el
+  documento SSOTIGAD): `{pk, fields}` donde `fields` es un `RecordDef`; ahí se irán agregando
+  foreign keys, subgrillas, título, etc. Se construye con `defineEntity`, que chequea en
+  compilación que los elementos de `pk` sean keys de `fields` (funciona con PK compuesta)
+  y preserva los literales (parámetros de tipo `const`).
+* Convención de nombres en los sistemas de ejemplo: el record en singular, la entidad en
+  plural (`docente` es el `RecordDef`, `docentes` es la entity que lo envuelve).
+* `PkFieldsOf<TEntityDef>` / `extractPk(entityDef)`: los campos de la pk como `RecordDef`
+  tipado exacto, para heredarlos con spread en otra entidad
+  (`fields: {...extractPk(cursos), orden: ...}` — la repetición semántica buena del documento).
 * `RecordInfoOf<TRecordDef>`: la Info precisa que corresponde a una Def concreta (conserva
   las claves y los literales de `type`); es lo que devuelve `completeRecord`. El sufijo `Of`
   marca "tipo derivado de una definición concreta".
