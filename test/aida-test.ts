@@ -1,7 +1,7 @@
 import * as assert from "assert";
 
-import { RecordInstanceType, completeRecord, defineEntity, extractPk } from "../src/common/system-design";
-import { typeDefs, cargo, materia, curso, clase, cursos, clases } from "../examples/common/aida";
+import { RecordInstanceType, completeRecord, defineEntity, extractPk, mergePk } from "../src/common/system-design";
+import { typeDefs, cargo, materia, curso, clase, cursos, clases, opcion, opciones, inscripciones, presencia, presencias } from "../examples/common/aida";
 
 describe("aida example", function(){
     it("deduces the record instance type", function(){
@@ -103,5 +103,30 @@ describe("aida entities", function(){
         var wrongType: 'integer' = clases.fields.periodo.type;
         assert.equal(periodoType, 'text');
         assert.equal(wrongType, 'text');
+    })
+    it("chains pk inheritance (clases → preguntas → opciones)", function(){
+        var opcionesPk: readonly ['periodo', 'materia', 'orden', 'pregunta', 'opcion'] = opciones.pk;
+        var opcionesPkBack: typeof opciones.pk = opcionesPk;
+        assert.deepStrictEqual(opciones.pk, ['periodo', 'materia', 'orden', 'pregunta', 'opcion']);
+        assert.deepStrictEqual(Object.keys(opcion), ['periodo', 'materia', 'orden', 'pregunta', 'opcion', 'detalle']);
+        assert.deepStrictEqual(opcionesPkBack, opcionesPk);
+    })
+    it("merges overlapping pks without repeating (inscripciones + clases)", function(){
+        // periodo and materia are in both pks and must appear once, in order
+        var merged = mergePk(inscripciones.pk, clases.pk);
+        var mergedExpected: readonly ['periodo', 'materia', 'alumno', 'orden'] = merged;
+        var mergedBack: typeof merged = mergedExpected;
+        assert.deepStrictEqual(merged, ['periodo', 'materia', 'alumno', 'orden']);
+        // presencias uses that merge as its pk:
+        var presenciasPk: readonly ['periodo', 'materia', 'alumno', 'orden'] = presencias.pk;
+        assert.deepStrictEqual(presencias.pk, ['periodo', 'materia', 'alumno', 'orden']);
+        // and the fields spread dedups the shared fields by itself:
+        assert.deepStrictEqual(Object.keys(presencia), ['periodo', 'materia', 'alumno', 'orden']);
+        assert.deepStrictEqual(presenciasPk, mergedBack);
+        // the whole chain still deduces the instance type:
+        type Presencia = RecordInstanceType<typeof typeDefs, typeof presencia>
+        var unaPresencia: Presencia = {periodo: '2026-1c', materia: 'AlgoI', alumno: 'L1234', orden: 1};
+        var presenciaBack: {periodo: string, materia: string, alumno: string, orden: number} = unaPresencia;
+        assert.deepStrictEqual(presenciaBack, unaPresencia);
     })
 })

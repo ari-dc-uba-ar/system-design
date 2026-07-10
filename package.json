@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "test": "tsc && mocha --exit dist/test/",
-    "test-cov": "tsc && c8 mocha dist/test/"
+    "test": "tsc && mocha --exit --node-option enable-source-maps dist/test/",
+    "test-cov": "tsc && c8 mocha --node-option enable-source-maps dist/test/"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

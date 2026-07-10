@@ -85,6 +85,10 @@ Nombres ya elegidos:
 * `PkFieldsOf<TEntityDef>` / `extractPk(entityDef)`: los campos de la pk como `RecordDef`
   tipado exacto, para heredarlos con spread en otra entidad
   (`fields: {...extractPk(cursos), orden: ...}` — la repetición semántica buena del documento).
+* `MergedPk<TPks>` / `mergePk(...pks)`: une pks que se superponen sin repetir elementos,
+  deduplicando también a nivel de tipos (tupla recursiva), preservando el orden de primera
+  aparición. Es para pks combinadas (`presencias.pk = mergePk(inscripciones.pk, clases.pk)`);
+  para los `fields` no hace falta: el spread ya deduplica keys solo.
 * `RecordInfoOf<TRecordDef>`: la Info precisa que corresponde a una Def concreta (conserva
   las claves y los literales de `type`); es lo que devuelve `completeRecord`. El sufijo `Of`
   marca "tipo derivado de una definición concreta".

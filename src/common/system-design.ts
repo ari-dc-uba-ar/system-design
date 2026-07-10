@@ -62,3 +62,27 @@ export function extractPk<TEntityDef extends EntityDef<TypeCollection>>(entityDe
     return Object.fromEntries(entityDef.pk.map(name => [name, fields[name]])) as PkFieldsOf<TEntityDef>;
 }
 
+type FlattenPks<TPks extends readonly (readonly string[])[]> =
+    TPks extends readonly [infer THead extends readonly string[], ...infer TRest extends readonly (readonly string[])[]]
+        ? readonly [...THead, ...FlattenPks<TRest>]
+        : readonly []
+
+type DedupPk<TPk extends readonly string[], TSeen extends string = never> =
+    TPk extends readonly [infer THead extends string, ...infer TRest extends readonly string[]]
+        ? THead extends TSeen
+            ? DedupPk<TRest, TSeen>
+            : readonly [THead, ...DedupPk<TRest, TSeen | THead>]
+        : readonly []
+
+export type MergedPk<TPks extends readonly (readonly string[])[]> = DedupPk<FlattenPks<TPks>>
+
+export function mergePk<const TPks extends readonly (readonly string[])[]>(...pks: TPks): MergedPk<TPks> {
+    const merged: string[] = [];
+    for (const pk of pks) {
+        for (const name of pk) {
+            if (!merged.includes(name)) merged.push(name);
+        }
+    }
+    return merged as unknown as MergedPk<TPks>;
+}
+

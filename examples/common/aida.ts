@@ -2,7 +2,7 @@
 
 import {
     boxType, commonTypeDefs,
-    RecordDef, defineEntity, extractPk
+    RecordDef, defineEntity, extractPk, mergePk
 } from "../../src/common/system-design";
 
 type Fecha = {año: number, mes: number, día:number}
@@ -70,6 +70,49 @@ export const clase = {
 
 export const clases = defineEntity({pk: [...cursos.pk, 'orden'], fields: clase})
 
+export const alumno = {
+    alumno           : {type: 'text' },
+    apellido         : {type: 'text' , nullable:false},
+    nombres          : {type: 'text' , nullable:false},
+    email            : {type: 'email'},
+} satisfies RecordsDef
+
+export const alumnos = defineEntity({pk: ['alumno'], fields: alumno})
+
+export const pregunta = {
+    ...extractPk(clases),
+    pregunta         : {type: 'integer'},
+    formulacion      : {type: 'text'   , nullable:false, label: 'formulación', description: 'texto principal de la pregunta'},
+    aclaraciones     : {type: 'text'   , description: 'texto que no necesita repetirse cuando se quiera referir a una pregunta por su formulación, pero que es necesario para aclarar el contexto o posibles ambigüedades de la pregunta'},
+    tipo_respuesta   : {type: 'text'   , nullable:false, label: 'tipo'}
+} satisfies RecordsDef
+
+export const preguntas = defineEntity({pk: [...clases.pk, 'pregunta'], fields: pregunta})
+
+export const opcion = {
+    ...extractPk(preguntas),
+    opcion           : {type: 'text'   },
+    detalle          : {type: 'text'   },
+} satisfies RecordsDef
+
+export const opciones = defineEntity({pk: [...preguntas.pk, 'opcion'], fields: opcion})
+
+export const inscripcion = {
+    ...extractPk(cursos),
+    ...extractPk(alumnos),
+} satisfies RecordsDef
+
+export const inscripciones = defineEntity({pk: [...cursos.pk, 'alumno'], fields: inscripcion})
+
+/* combined pk: inscripciones and clases share periodo and materia, no repetition */
+
+export const presencia = {
+    ...extractPk(inscripciones),
+    ...extractPk(clases),
+} satisfies RecordsDef
+
+export const presencias = defineEntity({pk: mergePk(inscripciones.pk, clases.pk), fields: presencia})
+
 export const recordDefs = {
     cargo,
     docente,
@@ -78,6 +121,11 @@ export const recordDefs = {
     periodo,
     curso,
     clase,
+    alumno,
+    pregunta,
+    opcion,
+    inscripcion,
+    presencia,
 }
 
 export const entityDefs = {
@@ -86,4 +134,9 @@ export const entityDefs = {
     periodos,
     cursos,
     clases,
+    alumnos,
+    preguntas,
+    opciones,
+    inscripciones,
+    presencias,
 }
