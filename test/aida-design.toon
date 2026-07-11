@@ -6,78 +6,28 @@ docentes:
       entity: docentes
       fields:
         jefe: docente
-  fields:
-    docente:
-      type: text
-      isName: false
-      nullable: true
-      label: docente
-      description: ""
-    apellido:
-      type: text
-      isName: false
-      nullable: false
-      label: apellido
-      description: ""
-    nombres:
-      type: text
-      isName: false
-      nullable: false
-      label: nombres
-      description: ""
-    cargo:
-      type: text
-      isName: false
-      nullable: true
-      label: cargo
-      description: ""
-    email:
-      type: email
-      isName: false
-      nullable: true
-      label: email
-      description: ""
-    email_alternativo:
-      type: email
-      isName: false
-      nullable: true
-      label: email alternativo
-      description: ""
-    jefe:
-      type: text
-      isName: false
-      nullable: true
-      label: jefe
-      description: jefe de cátedra (otro docente)
+  fields[7]{name,type,isName,nullable,label,description}:
+    docente,text,false,true,docente,""
+    apellido,text,false,false,apellido,""
+    nombres,text,false,false,nombres,""
+    cargo,text,false,true,cargo,""
+    email,email,false,true,email,""
+    email_alternativo,email,false,true,email alternativo,""
+    jefe,text,false,true,jefe,jefe de cátedra (otro docente)
 materias:
   pk[1]: materia
   uks:
     denominacion[1]: denominacion
   fks:
-  fields:
-    materia:
-      type: text
-      isName: false
-      nullable: true
-      label: materia
-      description: ""
-    denominacion:
-      type: text
-      isName: true
-      nullable: false
-      label: denominación
-      description: "si corresponde a más de una carrera, aclarar en el nombre"
+  fields[2]{name,type,isName,nullable,label,description}:
+    materia,text,false,true,materia,""
+    denominacion,text,true,false,denominación,"si corresponde a más de una carrera, aclarar en el nombre"
 periodos:
   pk[1]: periodo
   uks:
   fks:
-  fields:
-    periodo:
-      type: text
-      isName: false
-      nullable: true
-      label: periodo
-      description: "bimestre, cuatrimestre, etc..."
+  fields[1]{name,type,isName,nullable,label,description}:
+    periodo,text,false,true,periodo,"bimestre, cuatrimestre, etc..."
 cursos:
   pk[2]: periodo,materia
   uks:
@@ -91,25 +41,10 @@ cursos:
     responsable:
       entity: docentes
       fields[1]: docente
-  fields:
-    periodo:
-      type: text
-      isName: false
-      nullable: true
-      label: periodo
-      description: "bimestre, cuatrimestre, etc..."
-    materia:
-      type: text
-      isName: false
-      nullable: true
-      label: materia
-      description: ""
-    docente:
-      type: text
-      isName: false
-      nullable: true
-      label: docente
-      description: ""
+  fields[3]{name,type,isName,nullable,label,description}:
+    periodo,text,false,true,periodo,"bimestre, cuatrimestre, etc..."
+    materia,text,false,true,materia,""
+    docente,text,false,true,docente,""
 clases:
   pk[3]: periodo,materia,orden
   uks:
@@ -117,66 +52,21 @@ clases:
     cursos:
       entity: cursos
       fields[2]: periodo,materia
-  fields:
-    periodo:
-      type: text
-      isName: false
-      nullable: true
-      label: periodo
-      description: "bimestre, cuatrimestre, etc..."
-    materia:
-      type: text
-      isName: false
-      nullable: true
-      label: materia
-      description: ""
-    orden:
-      type: integer
-      isName: false
-      nullable: true
-      label: orden
-      description: ""
-    fecha:
-      type: fecha
-      isName: false
-      nullable: true
-      label: fecha
-      description: ""
-    tema:
-      type: text
-      isName: false
-      nullable: true
-      label: tema
-      description: ""
+  fields[5]{name,type,isName,nullable,label,description}:
+    periodo,text,false,true,periodo,"bimestre, cuatrimestre, etc..."
+    materia,text,false,true,materia,""
+    orden,integer,false,true,orden,""
+    fecha,fecha,false,true,fecha,""
+    tema,text,false,true,tema,""
 alumnos:
   pk[1]: alumno
   uks:
   fks:
-  fields:
-    alumno:
-      type: text
-      isName: false
-      nullable: true
-      label: alumno
-      description: ""
-    apellido:
-      type: text
-      isName: false
-      nullable: false
-      label: apellido
-      description: ""
-    nombres:
-      type: text
-      isName: false
-      nullable: false
-      label: nombres
-      description: ""
-    email:
-      type: email
-      isName: false
-      nullable: true
-      label: email
-      description: ""
+  fields[4]{name,type,isName,nullable,label,description}:
+    alumno,text,false,true,alumno,""
+    apellido,text,false,false,apellido,""
+    nombres,text,false,false,nombres,""
+    email,email,false,true,email,""
 preguntas:
   pk[4]: periodo,materia,orden,pregunta
   uks:
@@ -184,49 +74,14 @@ preguntas:
     clases:
       entity: clases
       fields[3]: periodo,materia,orden
-  fields:
-    periodo:
-      type: text
-      isName: false
-      nullable: true
-      label: periodo
-      description: "bimestre, cuatrimestre, etc..."
-    materia:
-      type: text
-      isName: false
-      nullable: true
-      label: materia
-      description: ""
-    orden:
-      type: integer
-      isName: false
-      nullable: true
-      label: orden
-      description: ""
-    pregunta:
-      type: integer
-      isName: false
-      nullable: true
-      label: pregunta
-      description: ""
-    formulacion:
-      type: text
-      isName: false
-      nullable: false
-      label: formulación
-      description: texto principal de la pregunta
-    aclaraciones:
-      type: text
-      isName: false
-      nullable: true
-      label: aclaraciones
-      description: "texto que no necesita repetirse cuando se quiera referir a una pregunta por su formulación, pero que es necesario para aclarar el contexto o posibles ambigüedades de la pregunta"
-    tipo_respuesta:
-      type: text
-      isName: false
-      nullable: false
-      label: tipo
-      description: ""
+  fields[7]{name,type,isName,nullable,label,description}:
+    periodo,text,false,true,periodo,"bimestre, cuatrimestre, etc..."
+    materia,text,false,true,materia,""
+    orden,integer,false,true,orden,""
+    pregunta,integer,false,true,pregunta,""
+    formulacion,text,false,false,formulación,texto principal de la pregunta
+    aclaraciones,text,false,true,aclaraciones,"texto que no necesita repetirse cuando se quiera referir a una pregunta por su formulación, pero que es necesario para aclarar el contexto o posibles ambigüedades de la pregunta"
+    tipo_respuesta,text,false,false,tipo,""
 opciones:
   pk[5]: periodo,materia,orden,pregunta,opcion
   uks:
@@ -234,43 +89,13 @@ opciones:
     preguntas:
       entity: preguntas
       fields[4]: periodo,materia,orden,pregunta
-  fields:
-    periodo:
-      type: text
-      isName: false
-      nullable: true
-      label: periodo
-      description: "bimestre, cuatrimestre, etc..."
-    materia:
-      type: text
-      isName: false
-      nullable: true
-      label: materia
-      description: ""
-    orden:
-      type: integer
-      isName: false
-      nullable: true
-      label: orden
-      description: ""
-    pregunta:
-      type: integer
-      isName: false
-      nullable: true
-      label: pregunta
-      description: ""
-    opcion:
-      type: text
-      isName: false
-      nullable: true
-      label: opcion
-      description: ""
-    detalle:
-      type: text
-      isName: false
-      nullable: true
-      label: detalle
-      description: ""
+  fields[6]{name,type,isName,nullable,label,description}:
+    periodo,text,false,true,periodo,"bimestre, cuatrimestre, etc..."
+    materia,text,false,true,materia,""
+    orden,integer,false,true,orden,""
+    pregunta,integer,false,true,pregunta,""
+    opcion,text,false,true,opcion,""
+    detalle,text,false,true,detalle,""
 inscripciones:
   pk[3]: periodo,materia,alumno
   uks:
@@ -281,25 +106,10 @@ inscripciones:
     alumnos:
       entity: alumnos
       fields[1]: alumno
-  fields:
-    periodo:
-      type: text
-      isName: false
-      nullable: true
-      label: periodo
-      description: "bimestre, cuatrimestre, etc..."
-    materia:
-      type: text
-      isName: false
-      nullable: true
-      label: materia
-      description: ""
-    alumno:
-      type: text
-      isName: false
-      nullable: true
-      label: alumno
-      description: ""
+  fields[3]{name,type,isName,nullable,label,description}:
+    periodo,text,false,true,periodo,"bimestre, cuatrimestre, etc..."
+    materia,text,false,true,materia,""
+    alumno,text,false,true,alumno,""
 presencias:
   pk[4]: periodo,materia,alumno,orden
   uks:
@@ -310,31 +120,11 @@ presencias:
     clases:
       entity: clases
       fields[3]: periodo,materia,orden
-  fields:
-    periodo:
-      type: text
-      isName: false
-      nullable: true
-      label: periodo
-      description: "bimestre, cuatrimestre, etc..."
-    materia:
-      type: text
-      isName: false
-      nullable: true
-      label: materia
-      description: ""
-    alumno:
-      type: text
-      isName: false
-      nullable: true
-      label: alumno
-      description: ""
-    orden:
-      type: integer
-      isName: false
-      nullable: true
-      label: orden
-      description: ""
+  fields[4]{name,type,isName,nullable,label,description}:
+    periodo,text,false,true,periodo,"bimestre, cuatrimestre, etc..."
+    materia,text,false,true,materia,""
+    alumno,text,false,true,alumno,""
+    orden,integer,false,true,orden,""
 mesas:
   pk[3]: periodo,materia,fecha
   uks:
@@ -350,34 +140,9 @@ mesas:
       entity: docentes
       fields:
         vocal: docente
-  fields:
-    periodo:
-      type: text
-      isName: false
-      nullable: true
-      label: periodo
-      description: "bimestre, cuatrimestre, etc..."
-    materia:
-      type: text
-      isName: false
-      nullable: true
-      label: materia
-      description: ""
-    fecha:
-      type: fecha
-      isName: false
-      nullable: true
-      label: fecha
-      description: ""
-    presidente:
-      type: text
-      isName: false
-      nullable: true
-      label: presidente
-      description: ""
-    vocal:
-      type: text
-      isName: false
-      nullable: true
-      label: vocal
-      description: ""
+  fields[5]{name,type,isName,nullable,label,description}:
+    periodo,text,false,true,periodo,"bimestre, cuatrimestre, etc..."
+    materia,text,false,true,materia,""
+    fecha,fecha,false,true,fecha,""
+    presidente,text,false,true,presidente,""
+    vocal,text,false,true,vocal,""
