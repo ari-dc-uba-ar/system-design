@@ -27,6 +27,10 @@ Este módulo cubre **solo la parte descriptiva**: no genera nada.
 
 * `src/common`: el framework descriptor. No conoce ningún sistema concreto.
   (Más adelante podrían aparecer `src/backend` y `src/frontend`, o aplanarse todo a `src` si no hacen falta.)
+  * `system-design.ts`: entidades básicas (basadas en tablas): `FieldDef`/`FieldInfo`, `RecordDef`/`RecordInfo`,
+    `EntityDef`/`EntityInfo`, fks, uks.
+  * `derived-entities.ts` (a crear): entidades derivadas de las básicas — ver sección propia más abajo.
+    Van en archivo aparte porque no comparten la forma fuertemente tipada en compile-time de las básicas.
 * `examples/common`: un sistema de ejemplo (sistema de alumnos) descripto con el framework.
 * `test/`: tests con mocha que importan las definiciones de los ejemplos (los ejemplos implican tests).
   `npm test` compila con tsc y corre mocha sobre `dist/test/`; no se usa ts-node ni loaders.
@@ -105,3 +109,40 @@ Nombres ya elegidos:
 * `RecordInfoOf<TRecordDef>`: la Info precisa que corresponde a una Def concreta (conserva
   las claves y los literales de `type`); es lo que devuelve `completeRecord`. El sufijo `Of`
   marca "tipo derivado de una definición concreta".
+
+## Entidades derivadas (diseño acordado, todavía sin implementar)
+
+Además de las básicas (basadas en tablas), va a haber entidades derivadas: aumentadas por fk
+(saliente y entrante), tipo pivote (matriz entre dos entidades) y, más adelante, basadas en
+reportes SQL libres. Viven en `derived-entities.ts`, separado de `system-design.ts`.
+
+* La interfaz común entre básicas y derivadas no es un tipo nuevo: es una generalización de
+  `EntityInfo`. `EntityInfo` pasa a ser `GridInfo<TColumn extends FieldInfo = FieldInfo>` =
+  `{fields: Record<string, TColumn>, pk, fks, uks}`; la `EntityInfo` de las básicas es el caso
+  `GridInfo<FieldInfo>`. Es lo que necesita un frontend/data-layer de grilla genérico (reordenar,
+  filtrar, ocultar/mostrar columnas, editar lo editable) para servir a cualquier clase de entidad
+  sin conocer de cuál se trata; lo que cambia entre clases es la capa de datos (cómo se lee/escribe
+  cada campo), no la forma.
+* Falta agregar `editable: boolean` a `FieldInfo` (hoy no existe la noción de solo-lectura).
+* Entidad aumentada por fk saliente: se incorporan los campos `isName` de la entidad destino
+  (visibles) y el resto ocultos pero pedibles/filtrables. El origen de estos campos no necesita
+  un alias nuevo: se identifica con la key del `fks` de la entidad (la misma key que ya
+  desambigua dos fks a la misma entidad, como `presidente`/`vocal` → `docentes`).
+* Entidad aumentada por fk entrante: columnas calculadas sobre los hijos (ej: `cantidad__ciudades`),
+  con la estrategia de cómputo referenciada por nombre (puede haber más de una alternativa de
+  agregación para la misma fk entrante).
+* `PivotGridDef`: declara qué entidad va a las filas, cuál a las columnas y cuál a las celdas (la
+  entidad de celdas debe tener fk a las otras dos — `rowsFk`/`columnsFk` en la Def solo hacen falta
+  si hay ambigüedad, mismo mecanismo que la key de `fks`), y `cellFields`: qué campos de la entidad
+  de celdas se pivotean (ej: `estado`, `nota` entre alumnos y materias).
+  `createPivotGridFactory(entities, pivotDef)` valida una sola vez contra el sistema completo
+  (análogo a `defineEntities`) y devuelve una función que, dado el array real de filas de la
+  entidad-columna (dato, no definición — ej: las materias de una carrera puntual), arma en el
+  momento el `PivotGridInfo` con una columna dinámica por fila recibida, 100% compatible con
+  `GridInfo`. Sigue siendo descriptivo (produce una `Info`, no un artefacto generado): no viola
+  "este módulo no genera nada".
+* Columnas compuestas (a definir más adelante; no es exclusivo de Pivot): un `ColumnInfo` podría
+  representar más de un campo real (`sourceFields: readonly string[]`, con un `composer`
+  referenciado por nombre para combinar/separar valores) — serviría tanto para una celda pivoteada
+  (`estado`+`nota` como una sola columna visual) como para un campo compuesto de una entidad básica
+  (ej: duración = cantidad + unidad, dos columnas de la tabla mostradas/editadas como una).
